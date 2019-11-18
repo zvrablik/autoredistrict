@@ -111,15 +111,11 @@ public class VTD extends ReflectionJSONObject<VTD> implements Comparable<VTD> {
 	@Override
 	public int compareTo(VTD o) {
 		if( compare_centroid) {
-			return this.geometry.full_centroid[0] > o.geometry.full_centroid[0] ? 1 : 
-				 this.geometry.full_centroid[0] < o.geometry.full_centroid[0]  ? -1 :
-					 0
+			return Double.compare(this.geometry.full_centroid[0], o.geometry.full_centroid[0])
 					 ;
 		} else {
-			return 
-					this.id > o.id ? 1 :
-						this.id < o.id ? -1 :
-							0;
+			return
+					Integer.compare(this.id, o.id);
 		}
 	}
 
