@@ -32,6 +32,23 @@ To start the newly-compiled app from the bin directory, run:
 java -Xmx4096M -Xms1024M -classpath autoredistrict.jar:../jcom.jar ui/Applet
 ```
 
+### build with gradle
+
+It is not necessary to install gradle, all required files are downloaded automatically.
+
+just execute
+
+```
+./gradlew clean build distZip
+```
+
+This command generates autoredistrict-<version>.zip zip file in buildGradle/distributions
+Unzip this file and change directory to autoredistrict-<version>/bin and run this command
+```
+./autoredistrict
+```
+to execute autoredistrict app.
+
 CONTRIBUTION GUIDELINES:
 * I won't merge anything that can be abused - that makes it so the program can be used to gerrymander.
 it is currently impossible to use the program to gerrymander and it will stay that way.  this means that an otherwise "good" feature might get rejected - so be it.  this is the #1 rule and it trumps all other considerations.
