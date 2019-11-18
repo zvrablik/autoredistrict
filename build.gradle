@@ -1,0 +1,71 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
+buildDir = 'buildGradle'
+
+version = "zzz"
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+repositories {
+    jcenter()
+
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+dependencies {
+    implementation'jcom:jcom:unknownversion'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+application {
+    // Define the main class for the application
+    mainClassName = 'ui.Applet'
+}
+
+task createDocs {
+    def docs = file("$buildDir/docs")
+    outputs.dir docs
+    doLast {
+        docs.mkdirs()
+        new File(docs, 'readme.txt').write('This distribution is to execute ' + application.mainClassName)
+    }
+}
+
+
+sourceSets {
+    main{
+        java {
+            srcDirs 'src/core','src/dbf', 'src/excel','src/geography', 'src/new_metrics','src/org', 'src/paretoFront' ,'src/serialization', 'src/solutions','src/stats', 'src/ui', 'src/util'
+        }
+    }
+}
+
+jar.enabled = true
+
+jar {
+    manifest {
+        def buildDate = new SimpleDateFormat("yyyy.MMMMM.dd").format(new Date())
+
+        attributes(
+                "Implementation-Title": project.description ?: project.name,
+                "Implementation-Version": version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': buildDate,
+                'Main-Class': 'ui.Applet',
+                'Built-JDK': System.getProperty('java.version'),
+                'version' : version
+        )
+    }
+}
+
