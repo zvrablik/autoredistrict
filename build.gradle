@@ -46,7 +46,8 @@ task createDocs {
 sourceSets {
     main{
         java {
-            srcDirs 'src/core','src/dbf', 'src/excel','src/geography', 'src/new_metrics','src/org', 'src/paretoFront' ,'src/serialization', 'src/solutions','src/stats', 'src/ui', 'src/util'
+            //srcDirs 'src/core','src/dbf', 'src/excel','src/geography', 'src/new_metrics','src/org', 'src/paretoFront' ,'src/serialization', 'src/solutions','src/stats', 'src/ui', 'src/util'
+            srcDirs 'src'
         }
     }
 }
