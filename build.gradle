@@ -23,7 +23,8 @@ repositories {
 }
 
 dependencies {
-    implementation'jcom:jcom:unknownversion'
+    implementation 'jcom:jcom:unknownversion'
+    implementation 'com.univocity:univocity-parsers:2.8.2'
 
     testImplementation 'junit:junit:4.12'
 }

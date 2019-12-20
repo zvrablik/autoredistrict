@@ -1,5 +1,7 @@
 package ui;
 
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 import geography.*;
 import geography.Properties;
 import new_metrics.Metrics;
@@ -16,7 +18,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -3687,6 +3691,50 @@ public class MainFrame extends JFrame implements iChangeListener, iDiscreteEvent
 		//System.exit(0);
 		return dh;
 	}
+
+	/**
+	 * Write features to csv file. Contains all VTD columns and territory column.
+	 * Territory column name is territory name and the value is string Territory+district number.
+	 *
+	 * @param filename csv file path
+	 * @param headers csv file headers
+	 * @param data feature data to save to csv file
+	 * @param vtd_districts found best solution how to split features to districts
+	 */
+	public void writeCVS(String filename, String[] headers, String[][] data, int[] vtd_districts){
+
+		System.out.println("Dump territoyr csv file to " + filename);
+
+		CsvWriter writer = null;
+		try(FileWriter outputWriter = new FileWriter(filename)) {
+			writer = new CsvWriter(outputWriter, new CsvWriterSettings());
+
+			List<String> oh = Arrays.stream(headers).collect(Collectors.toList());
+			oh.add("territory name");
+			writer.writeHeaders(oh);
+
+			for(int rowIndex = 0; rowIndex< data.length; rowIndex++){
+				int territoryName = vtd_districts[rowIndex];
+				String[] oneRow = data[rowIndex];
+				for (int valueIndex = 0; valueIndex < oneRow.length; valueIndex++) {
+					writer.addValue( oneRow[valueIndex]);
+				}
+
+				writer.addValue("Territory"+territoryName);
+				writer.writeValuesToRow();
+			}
+
+
+		} catch (IOException e) {
+			System.out.println("Can't write to file :" + filename + " because of " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
 	public void writeDBF(String filename, String[] headers, String[][] data) {
 		int MAX_HEADER_LENGTH = 10;
         DBField[] fields = new DBField[headers.length];
@@ -5857,7 +5905,18 @@ public class MainFrame extends JFrame implements iChangeListener, iDiscreteEvent
 		stopButton.setToolTipText("Stop evolving a solution.");
 		stopButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				stopEvolving();
+
+				String basePath = Download.getBasePath();
+				String[] outputHeader = featureCollection.getHeaders();
+				String[][] outputData = featureCollection.getData(outputHeader);
+
+				DistrictMap districtMap = featureCollection.ecology.population.get(0);
+				int[] vtd_districts = districtMap.vtd_districts;
+
+				String filename = basePath + "/territories_" + System.currentTimeMillis() + ".csv";
+				mainframe.writeCVS(filename, outputHeader, outputData, vtd_districts);
 			}
 		});
 		stopButton.setBounds(10, 135, 83, 29);
